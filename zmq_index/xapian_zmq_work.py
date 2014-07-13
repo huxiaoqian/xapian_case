@@ -91,7 +91,7 @@ if __name__ == '__main__':
         return item
     fill_field_funcs.append(fill_sentiment)
 
-    def fill_topic(item):
+    def fill_topics(item):
         topics = [u'中国', u'日本']
         item['topics'] = topics
         return item 
