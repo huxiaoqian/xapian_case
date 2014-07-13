@@ -4,7 +4,6 @@ import time
 import urllib
 import json
 import sys
-import os
 
 
 ORIGIN_KEYS = ['user', 'retweeted_uid', '_id', 'retweeted_mid', 'timestamp',
@@ -15,40 +14,13 @@ ORIGIN_KEYS = ['user', 'retweeted_uid', '_id', 'retweeted_mid', 'timestamp',
                'video_content', 'sp_type']
 RESP_ITER_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text',
                   'timestamp', 'reposts_count', 'source', 'bmiddle_pic',
-                  'geo', 'attitudes_count', 'comments_count']
+                  'geo', 'attitudes_count', 'comments_count', 'message_type']
 CONVERT_TO_INT_KEYS = ['_id', 'user', 'retweeted_uid', 'retweeted_mid',
-                       'reposts_count', 'comments_count', 'timestamp']
+                       'reposts_count', 'comments_count', 'timestamp', 'message_type']
 ABSENT_KEYS = ['attitudes_count', 'source']
 IP_TO_GEO_KEY = 'geo'
-MID_STARTS_WITH_C = '_id'  # weibo mid starts with 'c_'
-SP_TYPE_KEYS = '1'  # 1代表新浪微博
-
-
-# taobao ip service, limit 10 qps
-def taobaoipservice(ip):
-    try:
-        urlfp = urllib.urlopen('http://ip.taobao.com/service/getIpInfo.php?ip=' + ip)
-    except Exception, e:
-        print "Error ", e
-        sys.exit()
-
-    ipdata = urlfp.read()
-    urlfp.close()
-
-    allinfo = json.loads(ipdata)
-
-    for oneinfo in allinfo:
-        if "code" == oneinfo:
-            if 0 == allinfo[oneinfo]:
-                print "ip   : " + allinfo["data"]["ip"]
-                print "country : " + allinfo["data"]["country"]
-                print "province: " + allinfo["data"]["region"]
-                print "city: " + allinfo["data"]["city"]
-                print "(" + allinfo["data"]["isp"] + ")"
-                return allinfo["data"]["region"] + " " + allinfo["data"]["city"]
-            else:
-                print "ip parse error"
-
+MID_STARTS_WITH_C = '_id' # weibo mid starts with 'c_'
+SP_TYPE_KEYS = '1' # 1??????
 
 # IP address manipulation functions
 def numToDottedQuad(n):
@@ -63,11 +35,9 @@ def numToDottedQuad(n):
 
     return '.'.join(q)
 
-
 def ip2geo(ip_addr):
     # ip_addr: '236112240'
     DottedIpAddr = numToDottedQuad(int(ip_addr))
-    # geo = taobaoipservice(DottedIpAddr)
     return DottedIpAddr
 
 
@@ -128,15 +98,9 @@ def itemLine2Dict(line):
     itemdict = WeiboItem(itemlist)
     return itemdict
 
-
-def get_now_csv_no(ts):
-    local_ts = int(ts) - time.timezone
-    return int(local_ts) % (24 * 60 * 60) / (15 * 60)  + 1
-
-
 def main():
     # need to create directory csv_dir_path + './%s_cut/' % now_datestr
-    csv_dir_path = '/media/data/original_data/csv/'
+    csv_dir_path = '/mnt/ds600/share/weibo_201309/csv/'
     now_datestr = sys.argv[1]
 
     source_path = csv_dir_path + '%s/' % now_datestr
