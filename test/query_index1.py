@@ -21,7 +21,7 @@ s = XapianSearch(path='/home/ubuntu3/huxiaoqian/data/20140724/20140724/', name='
 # 如果需要返回terms，请一一指定需要的字段，并包括terms
 # 简单示例如下
 
-
+'''
 count, get_results = s.search(query={'text': [u'男士']}, sort_by=['-timestamp'], fields=['text', 'timestamp', 'user', 'terms', '_id'])
 
 print 'query1:'
@@ -38,6 +38,26 @@ if count!=0:
     print 'hits: %s' % count
 else:
     print 'no results'
+
+'''
+query_dict={
+    '_id': 3617761840458230
+    }
+count, get_results = s.search(query=query_dict, fields=['text', 'timestamp', 'user', 'terms', '_id'])
+print count
+for r in get_results():
+    print "** " * 10
+    print r['_id']
+    print r['user']
+    print r['text']
+    print r['timestamp']
+    print r['terms'] 
+
+
+
+
+
+    
 """
 print 'query2:'
 #根据user_id查询
