@@ -27,7 +27,7 @@ if count!=0:
 else:
     print 'no results'
 '''
-get_results = s.iter_all_docs(fields=['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count'])
+get_results = s.iter_all_docs(fields=['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', 'comments_count', 'sentiment', 'topics', 'message_type', 'terms' ])
 for r in get_results:
     print "** " * 10
     print r

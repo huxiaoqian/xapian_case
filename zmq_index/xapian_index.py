@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from xapian_backend import _database, Schema, DOCUMENT_ID_TERM_PREFIX, \
+from xapian_case.xapian_backend import _database, Schema, DOCUMENT_ID_TERM_PREFIX, \
     DOCUMENT_CUSTOM_TERM_PREFIX, InvalidIndexError
 from utils import log_to_stub
 from consts import XAPIAN_DATA_DIR, XAPIAN_STUB_FILE_DIR
@@ -42,10 +42,13 @@ class XapianIndex(object):
         document_id = DOCUMENT_ID_TERM_PREFIX + str(item[self.schema['obj_id']])
         for field in self.schema['idx_fields']:
             self.index_field(field, document, item)
-
+        
         # origin_data跟term和value的处理方式不一样
         item = dict(filter(lambda x: x[1] is not None, [(k, self.pre_func[k](item.get(k)) if k in self.pre_func and item.get(k) else item.get(k))
                     for k in self.iter_keys]))
+        
+        print item
+
         document.set_data(zlib.compress(pickle.dumps(item, pickle.HIGHEST_PROTOCOL), zlib.Z_BEST_COMPRESSION))
         document.add_term(document_id)
         if self.schema_version == 1:
