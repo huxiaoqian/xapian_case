@@ -3,8 +3,11 @@
 ###1. 结构说明
 
 三台服务器：
+
 219.224.135.49   原始csv文件存储机器以及redis服务器
+
 219.224.135.48   数据缓冲机器
+
 219.224.135.47   建立索引机器
 
 xapian_case主体部分主要由xapian_case，zmq_index，zmq_topic_workspace三个文件夹组成。
@@ -30,6 +33,11 @@ xapian_case主要完成47建立索引的功能。
     XAPIAN_ZMQ_VENT_HOST = '192.168.1.5'    # 原始csv文件存储机器的ip
     CSV_INPUT_FILEPATH = '/ubuntu5/huxiaoqian/xapian_case/data/weibo_201309/csv/20130918_cut/   #对应上面的分片数据文件夹
     VENT_REDIS_HOST = '192.168.1.5'         # redis服务器的地址
+```
+作如下操作：
+```
+    cd /home/ubuntu5/huxiaoqian/xapian_case/zmq_topic_workspace
+    python xapian_zmq_vent_json.py
 ```
 
 2.2 数据缓冲区接收及分发
