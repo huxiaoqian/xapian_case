@@ -111,3 +111,7 @@ def _index_field(field, document, item, schema_version, schema, term_gen):
         terms = item['terms']
         term_gen.set_document(document)
         term_gen.index_text_without_positions(' '.join(terms), 1, prefix)
+    elif field_name == 'topics':
+        terms = item['topics']
+        term_gen.set_document(document)
+        term_gen.index_text_without_positions(' '.join(terms), 1, prefix)

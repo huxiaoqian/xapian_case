@@ -77,7 +77,7 @@ if __name__ == '__main__':
                 except Exception, e:
                     print e
                     continue
-
+                print csv_name
                 if not csv_name:
                     time.sleep(5)
                     continue
