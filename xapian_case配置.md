@@ -110,7 +110,7 @@ xapian_case主要完成47建立索引的功能。
 3）当需要从redis推送某个csv文件时 进行如下操作：
 ```
     src/redis_cli                                 
-    lpush 'global_vent_index:queue' csv文件名 #推送redis中某个csv文件
+    lpush 'global_vent_queue:index' csv文件名 #推送redis中某个csv文件
 ```
 
 
