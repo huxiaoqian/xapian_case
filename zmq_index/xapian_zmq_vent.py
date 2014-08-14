@@ -30,9 +30,9 @@ def send_all(load_origin_data_func, sender, pre_funcs=[]):
             continue
         sender.send_json(item)
         count += 1
-        if count % (XAPIAN_FLUSH_DB_SIZE * 10) == 0:
+        if count % (XAPIAN_FLUSH_DB_SIZE / 10) == 0:
             te = time.time()
-            print '[%s] deliver speed: %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), te - ts, XAPIAN_FLUSH_DB_SIZE * 10)
+            print '[%s] deliver speed: %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), te - ts, XAPIAN_FLUSH_DB_SIZE / 10)
             if count % (XAPIAN_FLUSH_DB_SIZE * 100) == 0:
                 print '[%s] total deliver %s, cost: %s sec [avg: %sper/sec]' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), count, te - tb, count / (te - tb))
             ts = te
@@ -83,9 +83,11 @@ if __name__ == '__main__':
                     continue
 
                 csv_input = load_items_from_csv(os.path.join(CSV_FILEPATH, csv_name))
-                load_origin_data_func = csv_input.__iter__
+                print 'loaded', csv_name
+		load_origin_data_func = csv_input.__iter__
                 tmp_count, tmp_cost = send_all(load_origin_data_func, sender, pre_funcs=pre_funcs)
-                total_cost += tmp_cost
+                print 'all sended'
+		total_cost += tmp_cost
                 count += tmp_count
                 csv_input.close()
 

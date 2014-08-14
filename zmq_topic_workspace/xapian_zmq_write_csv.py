@@ -51,21 +51,25 @@ if __name__ == '__main__':
         if socks and socks.get(receiver) == zmq.POLLIN:
             item = receiver.recv_json()
             if not item:
+		print 'not item'
                 continue
 
             itemrow = json2csvrow(item)
             if not itemrow:
+		print 'not itemrow'
                 continue
 
             csvwriter.writerow(itemrow)
 
             count += 1
             if count % CHUNK_SIZE == 0:
-                csvfile.close()
+                print 'closed:',csv_name
+		csvfile.close()
                 chunks += 1
 
                 new_csv_name = datetime.now().strftime('%Y%m%d%H-%M-%S.csv')
-                if new_csv_name != csv_name:
+                print 'csv_name,new_csv_name', csv_name, new_csv_name
+		if new_csv_name != csv_name:
                     global_r0.rpush(GLOBAL_CSV_QUEUE_INDEX, csv_name)
                     global_r0.rpush(GLOBAL_CSV_QUEUE_SENTIMENT, csv_name)
                     global_r0.rpush(GLOBAL_CSV_QUEUE_PROFILE, csv_name)
