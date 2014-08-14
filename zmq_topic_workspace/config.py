@@ -27,4 +27,4 @@ VENT_REDIS_PORT = 6379
 
 # csv flow path where to write csv
 CHUNK_SIZE = 10000 # file chunk size
-CSV_FLOW_PATH = '/home/mirage/dev/original_data/csv/flow/'
+CSV_FLOW_PATH = '/home/ubuntu4/ljh/csv/flow/'
