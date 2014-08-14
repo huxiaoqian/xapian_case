@@ -91,17 +91,24 @@ if __name__ == '__main__':
         return item
     fill_field_funcs.append(fill_sentiment)
 
+    '''
     def fill_topics(item):
         topics = [u'中国', u'日本']
         item['topics'] = topics
-        return item 
+        return item
     fill_field_funcs.append(fill_topics)
+    '''
 
     s = load_scws()
 
     def cut_text(item):
         text = item['text'].encode('utf-8')
         item['terms'] = cut(s, text, cx=False)
+        item['topics'] = list(set(item['terms']))
+
+        print 'item[terms]',item['terms']
+        print 'item[topics]',item['topics']
         return item
+
     fill_field_funcs.append(cut_text)
     xapian_index_forever(xapian_indexer, receiver, controller, poller, fill_field_funcs=fill_field_funcs)
