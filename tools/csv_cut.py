@@ -5,7 +5,7 @@ import time
 import urllib
 import json
 import sys
-
+from xapian_case.utils import get_now_db_no
 
 ORIGIN_KEYS = ['user', 'retweeted_uid', '_id', 'retweeted_mid', 'timestamp',
                'input_time', 'geo', 'province', 'city', 'message_type', 'user_fansnum',
@@ -99,9 +99,14 @@ def itemLine2Dict(line):
     itemdict = WeiboItem(itemlist)
     return itemdict
 
+
+def get_now_csv_no(ts):
+    local_ts = int(ts) - time.timezone
+    return int(local_ts) % (24 * 60 * 60) / (15 * 60) + 1
+
 def main():
     # need to create directory csv_dir_path + './%s_cut/' % now_datestr
-    csv_dir_path = '/mnt/ds600/share/weibo_201309/csv/'
+    csv_dir_path = '/home/mirage/dev/original_data/csv/'
     now_datestr = sys.argv[1]
 
     source_path = csv_dir_path + '%s/' % now_datestr
@@ -111,7 +116,7 @@ def main():
     count = 0
     ts = te = time.time()
     for f in source_files:
-        print f
+        print 'f', f
         f = open(source_path + f, 'r')
         for line in f:
             itemdict = itemLine2Dict(line)

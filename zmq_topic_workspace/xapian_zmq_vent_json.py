@@ -50,7 +50,7 @@ if __name__ == '__main__':
         if os.path.isdir(CSV_INPUT_FILEPATH):
             count = 0
             total_cost = 0
-            
+
             files = os.listdir(CSV_INPUT_FILEPATH)
             # files = sorted([int(f[:-4]) for f in files])
             for f in files:
