@@ -12,8 +12,8 @@ XAPIAN_ZMQ_VENT_HOST = '219.224.135.48' # vent and control host
 XAPIAN_ZMQ_VENT_PORT = 5580 # vent port
 XAPIAN_ZMQ_CTRL_VENT_PORT = 5581 # control port
 XAPIAN_DB_PATH = 'master_timeline_weibo_csv'
-XAPIAN_DATA_DIR = '/home/ubuntu3/ljh/xapian_case/data/'
-XAPIAN_STUB_FILE_DIR = '/home/ubuntu3/ljh/xapian_case/stub/'
+XAPIAN_DATA_DIR = '/home/ubuntu3/ljh/csv/data/'
+XAPIAN_STUB_FILE_DIR = '/home/ubuntu3/ljh/csv/stub/'
 XAPIAN_ZMQ_POLL_TIMEOUT = 100000 # 10s
 XAPIAN_FLUSH_DB_SIZE = 10000 # xapian flush db size
 XAPIAN_EXTRA_FIELD = 'sentiment' # xapian extra field
@@ -26,7 +26,7 @@ GLOBAL_CSV_FILES = 'global_vent_queue:index'
 # csv data source
 FROM_CSV = 1
 if FROM_CSV:
-    CSV_FILEPATH = '/home/mirage/dev/original_data/csv/flow/'
+    CSV_FILEPATH = '/home/ubuntu4/ljh/csv/flow/'
 
 def _default_redis(host=VENT_REDIS_HOST, port=VENT_REDIS_PORT, db=0):
     return redis.StrictRedis(host, port, db)
