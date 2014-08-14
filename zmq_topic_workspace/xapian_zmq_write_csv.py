@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     # init redis
     global_r0 = _default_redis()
-    
+
     chunks = 0 # files count
     count = 0 # item count
     ts = time.time()
@@ -39,7 +39,9 @@ if __name__ == '__main__':
     import csv
     csvfile = file(os.path.join(CSV_FLOW_PATH, csv_name), 'a')
     csvwriter = csv.writer(csvfile)
+
     while 1:
+
         evts = poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT)
         if evts:
             socks = dict(poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT))
@@ -64,7 +66,7 @@ if __name__ == '__main__':
                 print 'closed:',csv_name
 		csvfile.close()
                 chunks += 1
-                 
+
                 new_csv_name = datetime.now().strftime('%Y%m%d%H-%M-%S.csv')
                 print 'csv_name,new_csv_name', csv_name, new_csv_name
 		if new_csv_name != csv_name:
