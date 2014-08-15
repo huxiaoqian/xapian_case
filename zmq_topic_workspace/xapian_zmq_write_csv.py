@@ -5,10 +5,11 @@ import sys
 import zmq
 import time
 import redis
+sys.path.append("..")
 from datetime import datetime
 from argparse import ArgumentParser
 from utils import json2csvrow
-from config import XAPIAN_ZMQ_VENT_HOST, XAPIAN_ZMQ_VENT_PORT, XAPIAN_ZMQ_POLL_TIMEOUT, \
+from consts import ZMQ_VENT_HOST, ZMQ_VENT_PORT, ZMQ_POLL_TIMEOUT, \
                    GLOBAL_CSV_QUEUE_INDEX, GLOBAL_CSV_QUEUE_SENTIMENT, GLOBAL_CSV_QUEUE_PROFILE, \
                    VENT_REDIS_HOST, VENT_REDIS_PORT, CHUNK_SIZE, CSV_FLOW_PATH, GLOBAL_CSV_QUEUE_HBASE
 
@@ -22,7 +23,7 @@ if __name__ == '__main__':
 
     # Socket to receive messages on
     receiver = context.socket(zmq.PULL)
-    receiver.connect('tcp://%s:%s' % (XAPIAN_ZMQ_VENT_HOST, XAPIAN_ZMQ_VENT_PORT))
+    receiver.connect('tcp://%s:%s' % (ZMQ_VENT_HOST, ZMQ_VENT_PORT))
 
     # Process messages from receiver
     poller = zmq.Poller()
@@ -42,9 +43,9 @@ if __name__ == '__main__':
 
     while 1:
 
-        evts = poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT)
+        evts = poller.poll(ZMQ_POLL_TIMEOUT)
         if evts:
-            socks = dict(poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT))
+            socks = dict(poller.poll(ZMQ_POLL_TIMEOUT))
         else:
             socks = None
 
