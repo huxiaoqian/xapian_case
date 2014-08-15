@@ -4,11 +4,13 @@ import os
 import sys
 import time
 import zmq
+sys.path.append("..")
 from utils import itemLine2Json
-from config import FROM_CSV, XAPIAN_ZMQ_VENT_PORT, CHUNK_SIZE
-if FROM_CSV:
-    from config import load_items_from_csv, CSV_INPUT_FILEPATH
+from consts import FROM_CSV, ZMQ_VENT_PORT, CHUNK_SIZE
 
+
+if FROM_CSV:
+    from consts import load_items_from_csv, CSV_INPUT_FILEPATH
 
 def send_all(load_origin_data_func, sender, pre_funcs=[]):
     count = 0
@@ -37,7 +39,7 @@ if __name__ == '__main__':
 
     # Socket to send messages on
     sender = context.socket(zmq.PUSH)
-    sender.bind("tcp://*:%s" % XAPIAN_ZMQ_VENT_PORT)
+    sender.bind("tcp://*:%s" % ZMQ_VENT_PORT)
 
     from_csv = FROM_CSV
 
