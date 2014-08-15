@@ -4,14 +4,14 @@
 
 三台服务器：
 
-219.224.135.49(192.168.1.5)   原始csv文件存储机器以及redis服务器
+219.224.135.46                原始csv文件存储机器
 
-219.224.135.48(192.168.1.4)   数据缓冲机器
+219.224.135.48(192.168.1.4)   数据缓冲机器以及redis服务器
 
 219.224.135.47(192.168.1.3)   建立索引机器
 
 xapian_case主体部分主要由xapian_case，zmq_index，zmq_topic_workspace三个文件夹组成。
-zmq_topic_workspace主要完成49向48分发数据以及48接收数据的功能。
+zmq_topic_workspace主要完成46向48分发数据以及48接收数据的功能。
 zmq_index主要完成48向47分发数据以及47接收数据的功能。
 xapian_case主要完成47建立索引的功能。
 
@@ -23,7 +23,7 @@ xapian_case主要完成47建立索引的功能。
 
 一天的csv文件（一天一个）按照时间段分为96个csv文件。即通过运行/tool/csv_cut.py进行数据分片，需要对数据存放的文件夹地址配置：
 ```
-    csv_dir_path = '/ubuntu5/huxiaoqian/xapian_case/data/weibo_201309/csv/'  # 原始数据文件夹
+    csv_dir_path = '/home/mirage/dev/original_data/csv/'                     # 原始数据文件夹
     now_datestr = sys.argv[1]
     source_path = csv_dir_path + '%s/' % now_datestr
     dest_path = csv_dir_path + '%s_cut/' % now_datestr                       # 分片数据文件夹
@@ -33,27 +33,27 @@ xapian_case主要完成47建立索引的功能。
 
 /xapian_case/zmq_topic_workspace/config.py 文件进行如下配置：
 ```
-    XAPIAN_ZMQ_VENT_HOST = '192.168.1.5'    # 原始csv文件存储机器的ip
-    CSV_INPUT_FILEPATH = '/ubuntu5/huxiaoqian/xapian_case/data/weibo_201309/csv/20130918_cut/'   #对应上面的分片数据文件夹
-    VENT_REDIS_HOST = '192.168.1.5'         # redis服务器的地址
+    XAPIAN_ZMQ_VENT_HOST = '219.224.135.46'    # 原始csv文件存储机器的ip
+    CSV_INPUT_FILEPATH = '/home/mirage/dev/original_data/csv/20130911_cut/'   #对应上面的分片数据文件夹
+    VENT_REDIS_HOST = '192.168.1.4'            # redis服务器的地址
 ```
 作如下操作：
 ```
-    cd /home/ubuntu5/huxiaoqian/xapian_case/zmq_topic_workspace
+    cd /home/mirage/ljh/xapian_case/zmq_topic_workspace
     python xapian_zmq_vent_json.py
 ```
 
 2.2 数据缓冲区接收及分发
 
-1）数据接收（来自49）
+1）数据接收（来自46）
 
 /xapian_case/zmq_topic_workspace/config.py 文件对存储数据的地址进行配置：
 ```
-    CSV_FLOW_PATH = '/home/ubuntu4/huxiaoqian/xapian_case/data/weibo_201309/csv/flow/'
+    CSV_FLOW_PATH = '/home/ubuntu4/ljh/csv/flow/'
 ```
-在命令行执行如下操作接收49传来的数据：
+在命令行执行如下操作接收46传来的数据：
 ```
-    cd /home/ubuntu4/huxiaoqian/xapian_case/zmq_topic_workspace
+    cd /home/ubuntu4/ljh/xapian_case/zmq_topic_workspace
     python xapian_zmq_write_csv.py
 ```
 
@@ -62,13 +62,13 @@ xapian_case主要完成47建立索引的功能。
 /xapian_case/zmq_index/consts.py 文件对数据分发向47做vent ip等如下配置：
 
 ```
-    XAPIAN_ZMQ_VENT_HOST = '192.168.1.4'            #48向47分发数据时，48为vent_host
-    VENT_REDIS_HOST = '192.168.1.5'                 #整个流程redis服务器始终为49
-    CSV_FILEPATH = '/home/ubuntu4/huxiaoqian/xapian_case/data/weibo_201309/csv/flow/'  #对应上面csv文件存储地址
+    XAPIAN_ZMQ_VENT_HOST = '219.224.135.48'            #48向47分发数据时，48为vent_host
+    VENT_REDIS_HOST = '192.168.1.4'                    #整个流程redis服务器始终为48
+    CSV_FILEPATH = '/home/ubuntu4/ljh/csv/flow/'       #对应上面csv文件存储地址
 ```
 在命令行开启数据分发：
 ```
-    cd /home/ubuntu4/huxiaoqian/xapian_case/zmq_index
+    cd /home/ubuntu4/ljh/xapian_case/zmq_index
     python xapian_zmq_vent.py
 ```
 
@@ -76,12 +76,12 @@ xapian_case主要完成47建立索引的功能。
 
 /xapian_case/zmq_index/consts.py 文件对数据接收地址进行如下配置：
 ```
-    XAPIAN_DATA_DIR = '/home/ubuntu3/huxiaoqian/xapian_case/data/weibo_201309/data/'
-    XAPIAN_STUB_FILE_DIR= '/home/ubuntu3/huxiaoqian/xapian_case/data/weibo_201309/stub/'
+    XAPIAN_DATA_DIR = '/home/ubuntu3/ljh/csv/data/'
+    XAPIAN_STUB_FILE_DIR= '/home/ubuntu3/ljh/csv/stub/'
 ```
 在命令行开启索引构建：
 ```
-    cd /home/ubuntu3/huxiaoqian/xapian_case/zmq_index
+    cd /home/ubuntu3/ljh/xapian_case/zmq_index
     python xapian_zmq_work.py
 ```
 
