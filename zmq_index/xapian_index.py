@@ -42,12 +42,14 @@ class XapianIndex(object):
         document_id = DOCUMENT_ID_TERM_PREFIX + str(item[self.schema['obj_id']])
         for field in self.schema['idx_fields']:
             self.index_field(field, document, item)
-        
+
+        # print item
+
         # origin_data跟term和value的处理方式不一样
         item = dict(filter(lambda x: x[1] is not None, [(k, self.pre_func[k](item.get(k)) if k in self.pre_func and item.get(k) else item.get(k))
                     for k in self.iter_keys]))
-        
-        print item
+
+        # print item
 
         document.set_data(zlib.compress(pickle.dumps(item, pickle.HIGHEST_PROTOCOL), zlib.Z_BEST_COMPRESSION))
         document.add_term(document_id)
