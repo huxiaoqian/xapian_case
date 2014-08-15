@@ -4,6 +4,8 @@ import os
 import zmq
 import time
 import redis
+import sys
+sys.path.append("..")
 from datetime import datetime
 from xapian_case.csv2json import itemLine2Dict
 from consts import FROM_CSV, XAPIAN_ZMQ_VENT_PORT, XAPIAN_ZMQ_CTRL_VENT_PORT, \
@@ -13,10 +15,9 @@ from consts import FROM_CSV, XAPIAN_ZMQ_VENT_PORT, XAPIAN_ZMQ_CTRL_VENT_PORT, \
 
 if FROM_CSV:
     def load_items_from_csv(csv_filepath):
-        print 'csv file mode: read from csv %s' % csv_filepath
-        csv_input = open(csv_filepath)
-        return csv_input
-
+	print 'csv file mode: read from csv %s' % csv_filepath
+	csv_input = open(csv_filepath)
+	return csv_input
 
 def send_all(load_origin_data_func, sender, pre_funcs=[]):
     count = 0

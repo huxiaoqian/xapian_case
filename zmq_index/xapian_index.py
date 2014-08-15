@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import cPickle as pickle
+import zlib
+import xapian
+import os
+import sys
+sys.path.append("..")
 from xapian_case.xapian_backend import _database, Schema, DOCUMENT_ID_TERM_PREFIX, \
     DOCUMENT_CUSTOM_TERM_PREFIX, InvalidIndexError
 from utils import log_to_stub
 from consts import XAPIAN_DATA_DIR, XAPIAN_STUB_FILE_DIR
 from datetime import datetime
-import cPickle as pickle
-import zlib
-import xapian
-import os
 
 
 class XapianIndex(object):

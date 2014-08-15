@@ -4,6 +4,7 @@ import os
 import sys
 import zmq
 import time
+sys.path.append("..")
 from datetime import datetime
 from argparse import ArgumentParser
 from xapian_case.utils import load_scws, cut
@@ -90,14 +91,6 @@ if __name__ == '__main__':
         item[XAPIAN_EXTRA_FIELD] = sentiment
         return item
     fill_field_funcs.append(fill_sentiment)
-
-    '''
-    def fill_topics(item):
-        topics = [u'中国', u'日本']
-        item['topics'] = topics
-        return item
-    fill_field_funcs.append(fill_topics)
-    '''
 
     s = load_scws()
 

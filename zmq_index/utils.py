@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from filelock.filelock import FileLock
-from consts import XAPIAN_INDEX_LOCK_FILE, REDIS_CONF_MAX_DB_NO
-from datetime import datetime, date, timedelta
-
 import os
+import sys
 import scws
 import time
 import itertools
@@ -14,6 +11,11 @@ import multiprocessing
 import operator
 import re
 import socket
+sys.path.append("..")
+from filelock.filelock import FileLock
+from consts import XAPIAN_INDEX_LOCK_FILE, REDIS_CONF_MAX_DB_NO
+from datetime import datetime, date, timedelta
+
 
 SCWS_ENCODING = 'utf-8'
 SCWS_RULES = '/usr/local/scws/etc/rules.utf8.ini'
