@@ -33,7 +33,7 @@ xapian_case主要完成47建立索引的功能。
 
 /xapian_case/zmq_topic_workspace/config.py 文件进行如下配置：
 ```
-    XAPIAN_ZMQ_VENT_HOST = '219.224.135.46'    # 原始csv文件存储机器的ip
+    ZMQ_VENT_HOST = '219.224.135.46'           # 原始csv文件存储机器的ip
     CSV_INPUT_FILEPATH = '/home/mirage/dev/original_data/csv/20130911_cut/'   #对应上面的分片数据文件夹
     VENT_REDIS_HOST = '192.168.1.4'            # redis服务器的地址
 ```
