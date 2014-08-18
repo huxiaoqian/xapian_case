@@ -23,19 +23,24 @@ xapian_case主要完成47建立索引的功能。
 
 一天的csv文件（一天一个）按照时间段分为96个csv文件。即通过运行/tool/csv_cut.py进行数据分片，需要对数据存放的文件夹地址配置：
 ```
-    csv_dir_path = '/home/mirage/dev/original_data/csv/'                     # 原始数据文件夹
-    now_datestr = sys.argv[1]
-    source_path = csv_dir_path + '%s/' % now_datestr
-    dest_path = csv_dir_path + '%s_cut/' % now_datestr                       # 分片数据文件夹
+    csv_dir_path = '/home/mirage/dev/original_data/csv/' 
+    source_path = csv_dir_path + '%s/' % now_datestr                    # 原始数据文件夹
+    
+    csv_cut_path = '/home/mirage/dev/cut_data/csv/'                     # 分片数据文件夹
+    dest_path = csv_dir_path + '%s_cut/' % now_datestr           
+
+    csv_begin_datestr = sys.argv[1]                                     # 统计的开始日期
+    end_datestr = sys.argv[2]                                           # 统计的截止日期
+
     source_files = os.listdir(source_path)
 ```
 2）数据分发
 
 /xapian_case/zmq_topic_workspace/config.py 文件进行如下配置：
 ```
-    ZMQ_VENT_HOST = '219.224.135.46'           # 原始csv文件存储机器的ip
-    CSV_INPUT_FILEPATH = '/home/mirage/dev/original_data/csv/20130911_cut/'   #对应上面的分片数据文件夹
-    VENT_REDIS_HOST = '192.168.1.4'            # redis服务器的地址
+    ZMQ_VENT_HOST = '219.224.135.46'                        # 原始csv文件存储机器的ip
+    CSV_INPUT_FILEPATH = '/home/mirage/dev/cut_data/csv/'   # 对应上面的分片数据文件夹
+    VENT_REDIS_HOST = '192.168.1.4'                         # redis服务器的地址
 ```
 作如下操作：
 ```
