@@ -15,9 +15,9 @@ from consts import FROM_CSV, XAPIAN_ZMQ_VENT_PORT, XAPIAN_ZMQ_CTRL_VENT_PORT, \
 
 if FROM_CSV:
     def load_items_from_csv(csv_filepath):
-	print 'csv file mode: read from csv %s' % csv_filepath
-	csv_input = open(csv_filepath)
-	return csv_input
+        print 'csv file mode: read from csv %s' % csv_filepath
+        csv_input = open(csv_filepath)
+        return csv_input
 
 def send_all(load_origin_data_func, sender, pre_funcs=[]):
     count = 0
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     # Socket for worker control
     controller = context.socket(zmq.PUB)
     controller.bind("tcp://*:%s" % XAPIAN_ZMQ_CTRL_VENT_PORT)
-    
+
     # init redis
     global_r0 = _default_redis()
     from_csv = FROM_CSV
@@ -85,10 +85,10 @@ if __name__ == '__main__':
 
                 csv_input = load_items_from_csv(os.path.join(CSV_FILEPATH, csv_name))
                 print 'loaded', csv_name
-		load_origin_data_func = csv_input.__iter__
+                load_origin_data_func = csv_input.__iter__
                 tmp_count, tmp_cost = send_all(load_origin_data_func, sender, pre_funcs=pre_funcs)
                 print 'all sended'
-		total_cost += tmp_cost
+                total_cost += tmp_cost
                 count += tmp_count
                 csv_input.close()
 

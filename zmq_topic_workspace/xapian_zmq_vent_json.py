@@ -6,7 +6,7 @@ import time
 import zmq
 sys.path.append("..")
 from utils import itemLine2Json
-from consts import FROM_CSV, ZMQ_VENT_PORT, CHUNK_SIZE
+from consts import FROM_CSV, ZMQ_VENT_PORT, ZMQ_CTRL_VENT_PORT, CHUNK_SIZE
 
 
 if FROM_CSV:
@@ -41,6 +41,10 @@ if __name__ == '__main__':
     sender = context.socket(zmq.PUSH)
     sender.bind("tcp://*:%s" % ZMQ_VENT_PORT)
 
+    # Socket  for worker control
+    controller = context.socket(zmq.PUB)
+    controller.bind("tcp://*:%s" % ZMQ_CTRL_VENT_PORT)
+
     from_csv = FROM_CSV
 
     def csv_input_pre_func(item):
@@ -68,6 +72,10 @@ if __name__ == '__main__':
             load_origin_data_func = csv_input.__iter__
             count, total_cost = send_all(load_origin_data_func, sender, pre_funcs=pre_funcs)
             csv_input.close()
+
+    # send kill signal to workers
+    controller.send("KILL")
+    print 'send "KILL" to workers'
 
     # vent finished
     print 'xapian zmq vent string finished'

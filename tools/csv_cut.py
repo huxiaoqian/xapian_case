@@ -105,37 +105,48 @@ def get_now_csv_no(ts):
     return int(local_ts) % (24 * 60 * 60) / (15 * 60) + 1
 
 def main():
+    begin_datestr = sys.argv[1] # 统计的开始日期
+    end_datestr = sys.argv[2] # 统计的截止日期
     # need to create directory csv_dir_path + './%s_cut/' % now_datestr
     csv_dir_path = '/home/mirage/dev/original_data/csv/'
-    now_datestr = sys.argv[1]
+    csv_cut_path = '/home/mirage/dev/cut_data/csv/'
 
-    source_path = csv_dir_path + '%s/' % now_datestr
-    dest_path = csv_dir_path + '%s_cut/' % now_datestr
+    csv_files = os.listdir(csv_dir_path)
+    for csv_file in csv_files:
+        now_datestr = os.path.basename(csv_file)
 
-    source_files = os.listdir(source_path)
-    count = 0
-    ts = te = time.time()
-    for f in source_files:
-        print 'f', f
-        f = open(source_path + f, 'r')
-        for line in f:
-            itemdict = itemLine2Dict(line)
-            if itemdict:
-                item_timestamp = itemdict['timestamp']
-                csv_no = get_now_csv_no(item_timestamp)
+        if (now_datestr >= begin_datestr and now_datestr <= end_datestr):
+            source_path = csv_dir_path + '%s/' % now_datestr
+            dest_path = csv_cut_path + '%s_cut/' % now_datestr
+            print now_datestr,'chosen'
+            if not(os.path.exists(dest_path)):
+                os.makedirs(dest_path)
+                print now_datestr,'makedir'
 
-                fw = open(dest_path + str(csv_no) + '.csv', 'a')
-                fw.write(line + '\n')
-                fw.close()
 
-            if count % 10000 == 0:
-                te = time.time()
-                print count, '%s sec' % (te - ts)
-                ts = te
-            count += 1
+                source_files = os.listdir(source_path)
+                count = 0
+                ts = te = time.time()
+                for f in source_files:
+                    print 'f', f
+                    f = open(source_path + f, 'r')
+                    for line in f:
+                        itemdict = itemLine2Dict(line)
+                        if itemdict:
+                            item_timestamp = itemdict['timestamp']
+                            csv_no = get_now_csv_no(item_timestamp)
 
-        f.close()
+                            fw = open(dest_path + str(csv_no) + '.csv', 'a')
+                            fw.write(line + '\n')
+                            fw.close()
 
+                        if count % 10000 == 0:
+                            te = time.time()
+                            print count, '%s sec' % (te - ts)
+                            ts = te
+                        count += 1
+
+                    f.close()
 
 if __name__ == '__main__':
     main()

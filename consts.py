@@ -15,6 +15,7 @@ XAPIAN_FLUSH_DB_SIZE = 10000 # xapian flush db size
 # zmq vent port
 ZMQ_VENT_HOST = '219.224.135.46'  # vent host
 ZMQ_VENT_PORT = 5573 # vent port
+ZMQ_CTRL_VENT_PORT = 5574 # control port
 
 # xapian zmq vent port
 XAPIAN_ZMQ_VENT_HOST = '219.224.135.48' # vent and control host
@@ -29,7 +30,7 @@ if FROM_CSV:
         return csv_input
 
     # csv_cut files path
-    CSV_INPUT_FILEPATH = '/home/mirage/dev/original_data/csv/20130911_cut/'
+    CSV_INPUT_FILEPATH = '/home/mirage/dev/cut_data/csv/'
     # csv_flow files path
     CSV_FILEPATH = '/home/ubuntu4/ljh/csv/flow/'
 
