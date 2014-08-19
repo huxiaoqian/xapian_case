@@ -4,11 +4,13 @@ import redis
 
 # zmq poll timeout
 ZMQ_POLL_TIMEOUT = 10000  # 10s
+SUBSCRIBERS = 1 # amount of writers
 
 # xapian zmq poll timeout
 XAPIAN_ZMQ_POLL_TIMEOUT = 100000 # 100s
 XAPIAN_REMOTE_OPEN_TIMEOUT = 300000  # 300s
 
+FLOW_SIZE = 5000000 # flow file size
 CHUNK_SIZE = 10000 # file chunk size
 XAPIAN_FLUSH_DB_SIZE = 10000 # xapian flush db size
 
@@ -16,6 +18,7 @@ XAPIAN_FLUSH_DB_SIZE = 10000 # xapian flush db size
 ZMQ_VENT_HOST = '219.224.135.46'  # vent host
 ZMQ_VENT_PORT = 5573 # vent port
 ZMQ_CTRL_VENT_PORT = 5574 # control port
+ZMQ_SYNC_VENT_PORT = 5575 # sync port
 
 # xapian zmq vent port
 XAPIAN_ZMQ_VENT_HOST = '219.224.135.48' # vent and control host

@@ -6,7 +6,7 @@ import time
 import zmq
 sys.path.append("..")
 from utils import itemLine2Json
-from consts import FROM_CSV, ZMQ_VENT_PORT, ZMQ_CTRL_VENT_PORT, CHUNK_SIZE
+from consts import FROM_CSV, ZMQ_VENT_PORT, ZMQ_CTRL_VENT_PORT, ZMQ_SYNC_VENT_PORT, CHUNK_SIZE, SUBSCRIBERS
 
 
 if FROM_CSV:
@@ -16,6 +16,7 @@ def send_all(load_origin_data_func, sender, pre_funcs=[]):
     count = 0
     tb = time.time()
     ts = tb
+    '''
     for item in load_origin_data_func():
         if pre_funcs:
             for func in pre_funcs:
@@ -30,6 +31,7 @@ def send_all(load_origin_data_func, sender, pre_funcs=[]):
             if count % (CHUNK_SIZE * 100) == 0:
                 print 'total deliver %s, cost: %s sec [avg: %sper/sec]' % (count, te - tb, count / (te - tb))
             ts = te
+    '''
     total_cost = time.time() - tb
     return count, total_cost
 
@@ -45,6 +47,18 @@ if __name__ == '__main__':
     controller = context.socket(zmq.PUB)
     controller.bind("tcp://*:%s" % ZMQ_CTRL_VENT_PORT)
 
+    # Socket for sync
+    syncservice = context.socket(zmq.REP)
+    syncservice.bind("tcp://*:%s" % ZMQ_SYNC_VENT_PORT)
+
+    print 'waiting'
+    subscribers = 0
+    while (subscribers < SUBSCRIBERS):
+        str1 = syncservice.recv()
+        free(str1)
+        syncservice.send("")
+        subscribers += 1
+
     from_csv = FROM_CSV
 
     def csv_input_pre_func(item):
@@ -57,15 +71,24 @@ if __name__ == '__main__':
             count = 0
             total_cost = 0
 
-            files = os.listdir(CSV_INPUT_FILEPATH)
-            # files = sorted([int(f[:-4]) for f in files])
-            for f in files:
-                csv_input = load_items_from_csv(os.path.join(CSV_INPUT_FILEPATH, f))
-                load_origin_data_func = csv_input.__iter__
-                tmp_count, tmp_cost = send_all(load_origin_data_func, sender, pre_funcs=pre_funcs)
-                total_cost += tmp_cost
-                count += tmp_count
-                csv_input.close()
+            files_by_date = os.listdir(CSV_INPUT_FILEPATH)
+            for files_a_date in files_by_date:
+                print 'files_a_date', files_a_date
+                if (files_a_date == '20130912_cut'):
+                    time.sleep(60)
+                    controller.send('%sBEGIN' % files_a_date[:8])
+                    print 'sent"%sBEGIN" to workers' % files_a_date[:8]
+                    files = os.listdir(os.path.join(CSV_INPUT_FILEPATH, files_a_date))
+                    for f in files:
+                        csv_input = load_items_from_csv(os.path.join(CSV_INPUT_FILEPATH, files_a_date ,f))
+                        load_origin_data_func = csv_input.__iter__
+                        tmp_count, tmp_cost = send_all(load_origin_data_func, sender, pre_funcs=pre_funcs)
+                        total_cost += tmp_cost
+                        count += tmp_count
+                        csv_input.close()
+                    controller.send('END')
+                    print 'send"END" to workers'
+                    print files_a_date, 'sended', 'total deliver %s, cost %s sec' % (count, total_cost)
 
         elif os.path.isfile(CSV_INPUT_FILEPATH):
             csv_input = load_items_from_csv(CSV_INPUT_FILEPATH)

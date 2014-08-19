@@ -35,7 +35,7 @@ def xapian_index_forever(xapian_indexer, receiver, controller, poller, fill_fiel
             item = receiver.recv_json()
             if fill_field_funcs:
                 for func in fill_field_funcs:
-                    item = func(item) 
+                    item = func(item)
 
             # index
             xapian_indexer.add_or_update(item)
