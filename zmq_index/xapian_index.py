@@ -23,9 +23,8 @@ class XapianIndex(object):
             from consts import XAPIAN_DB_FOLDER_PREFIX
             db_folder = os.path.join(XAPIAN_DB_FOLDER_PREFIX, '_%s' % dbpath)
         else:
-            today_date_str = datetime.now().date().strftime("%Y%m%d")
             pid = os.getpid()
-            db_folder = os.path.join(XAPIAN_DATA_DIR, '%s/_%s_%s' % (today_date_str, dbpath, pid))
+            db_folder = os.path.join(XAPIAN_DATA_DIR, '%s_%s' % (dbpath, pid))
         self.db_folder = db_folder
         self.db = _database(db_folder, writable=True)
 
