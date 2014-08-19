@@ -11,47 +11,11 @@ from xapian_case.utils import load_scws, cut
 from xapian_index import XapianIndex
 from consts import XAPIAN_INDEX_SCHEMA_VERSION, XAPIAN_ZMQ_VENT_HOST, \
     XAPIAN_ZMQ_VENT_PORT, XAPIAN_ZMQ_CTRL_VENT_PORT, XAPIAN_DB_PATH, \
-    XAPIAN_ZMQ_POLL_TIMEOUT, XAPIAN_FLUSH_DB_SIZE, XAPIAN_ZMQ_SYNC_VENT_PORT
+    XAPIAN_ZMQ_POLL_TIMEOUT, XAPIAN_FLUSH_DB_SIZE, XAPIAN_ZMQ_SYNC_VENT_PORT, \
+    XAPIAN_DATA_DIR, XAPIAN_EXTRA_FIELD
+from triple_sentiment_classifier import triple_classifier
 
 SCHEMA_VERSION = XAPIAN_INDEX_SCHEMA_VERSION
-
-def xapian_index_forever(xapian_indexer, receiver, controller, poller, fill_field_funcs=[]):
-    count = 0
-    ts = time.time()
-    tb = ts
-    receive_kill = False
-    while 1:
-        evts = poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT)
-        if evts:
-            socks = dict(poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT))
-        elif receive_kill:
-            xapian_indexer.close()
-            print 'receive "KILL", worker stop, finally close db, cost: %ss' % (time.time() - tb)
-            break
-        else:
-            socks = None
-
-        if socks and socks.get(receiver) == zmq.POLLIN:
-            item = receiver.recv_json()
-            if fill_field_funcs:
-                for func in fill_field_funcs:
-                    item = func(item)
-
-            # index
-            xapian_indexer.add_or_update(item)
-
-            count += 1
-            if count % XAPIAN_FLUSH_DB_SIZE == 0:
-                te = time.time()
-                cost = te - ts
-                ts = te
-                print '[%s] [%s] totalxapian index: %s, %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), xapian_indexer.db_folder, count, cost, XAPIAN_FLUSH_DB_SIZE)
-
-        # Any waiting controller command acts as 'KILL'
-        if socks and socks.get(controller) == zmq.POLLIN:
-            controller.recv()
-            receive_kill = True
-
 
 if __name__ == '__main__':
     """
@@ -69,6 +33,15 @@ if __name__ == '__main__':
     controller.connect('tcp://%s:%s' % (XAPIAN_ZMQ_VENT_HOST, XAPIAN_ZMQ_CTRL_VENT_PORT))
     controller.setsockopt(zmq.SUBSCRIBE, "")
 
+    # Socket for sync
+    syncclient = context.socket(zmq.REQ)
+    syncclient.connect("tcp://%s:%s" % (XAPIAN_ZMQ_VENT_HOST, XAPIAN_ZMQ_SYNC_VENT_PORT))
+
+    # send sync signal
+    syncclient.send("")
+    str1 = syncclient.recv()
+    print 'ready'
+
     # Process messages from receiver and controller
     poller = zmq.Poller()
     poller.register(receiver, zmq.POLLIN)
@@ -79,13 +52,7 @@ if __name__ == '__main__':
     args = parser.parse_args(sys.argv[1:])
     remote_stub = args.remote_stub
 
-    dbpath = XAPIAN_DB_PATH
-    xapian_indexer = XapianIndex(dbpath, SCHEMA_VERSION, remote_stub)
-
     fill_field_funcs = []
-    from consts import XAPIAN_EXTRA_FIELD
-    from triple_sentiment_classifier import triple_classifier
-
     def fill_sentiment(item):
         sentiment = triple_classifier(item)
         item[XAPIAN_EXTRA_FIELD] = sentiment
@@ -93,7 +60,6 @@ if __name__ == '__main__':
     fill_field_funcs.append(fill_sentiment)
 
     s = load_scws()
-
     def cut_text(item):
         text = item['text'].encode('utf-8')
         item['terms'] = cut(s, text, cx=False)
@@ -102,6 +68,51 @@ if __name__ == '__main__':
         print 'item[terms]',item['terms']
         print 'item[topics]',item['topics']
         return item
-
     fill_field_funcs.append(cut_text)
-    xapian_index_forever(xapian_indexer, receiver, controller, poller, fill_field_funcs=fill_field_funcs)
+
+    count = 0
+
+    while 1:
+        evts = poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT)
+        if evts:
+            socks = dict(poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT))
+        else:
+            socks = None
+        print 'socks', socks
+
+        if socks and socks.get(receiver) == zmq.POLLIN:
+            item = receiver.recv_json()
+            if fill_field_funcs:
+                for func in fill_field_funcs:
+                    item = func(item)
+
+            # index
+            xapian_indexer.add_or_update(item)
+
+            count += 1
+            if count % XAPIAN_FLUSH_DB_SIZE == 0:
+                te = time.time()
+                cost = te - ts
+                ts = te
+                print '[%s] [%s] totalxapian index: %s, %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), xapian_indexer.db_folder, count, cost, XAPIAN_FLUSH_DB_SIZE)
+
+        elif socks and socks.get(controller) == zmq.POLLIN:
+            signal = controller.recv()
+            if signal[8:] == 'BEGIN': # data deliver begin
+                print 'BEGIN'
+                datestr = '%s_data/' % signal[:8]
+
+                if not os.path.exists(XAPIAN_DATA_DIR + datestr):
+                    os.makedirs(XAPIAN_DATA_DIR + datestr)
+
+                dbpath = datestr + '_' + XAPIAN_DB_PATH
+                xapian_indexer = XapianIndex(dbpath, SCHEMA_VERSION, remote_stub)
+                ts = time.time()
+                tb = ts
+
+            elif signal == "END":
+                print 'end'
+
+            elif signal == 'KILL':
+                print 'killed'
+

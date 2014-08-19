@@ -95,7 +95,11 @@ def itemLine2Dict(line):
     else:
         return None
 
-    itemdict = WeiboItem(itemlist)
+    try:
+        itemdict = WeiboItem(itemlist)
+    except:
+        itemdict = None
+
     return itemdict
 
 
