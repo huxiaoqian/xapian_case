@@ -31,9 +31,9 @@ def send_all(load_origin_data_func, sender, pre_funcs=[]):
             continue
         sender.send_json(item)
         count += 1
-        if count % (XAPIAN_FLUSH_DB_SIZE / 10) == 0:
+        if count % (XAPIAN_FLUSH_DB_SIZE * 10) == 0:
             te = time.time()
-            print '[%s] deliver speed: %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), te - ts, XAPIAN_FLUSH_DB_SIZE / 10)
+            print '[%s] deliver speed: %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), te - ts, XAPIAN_FLUSH_DB_SIZE * 10)
             if count % (XAPIAN_FLUSH_DB_SIZE * 100) == 0:
                 print '[%s] total deliver %s, cost: %s sec [avg: %sper/sec]' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), count, te - tb, count / (te - tb))
             ts = te
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # endstr = sys.argv[2]
 
     try:
-        SUBSCRIBERS =int(sys.argv[3])
+        SUBSCRIBERS =int(sys.argv[1])
     except:
         SUBSCRIBERS = 1
     context = zmq.Context()
@@ -81,6 +81,7 @@ if __name__ == '__main__':
     from_csv = FROM_CSV
 
     def csv_input_pre_func(item):
+        print 'item', item
         item = itemLine2Dict(item)
         return item
 
