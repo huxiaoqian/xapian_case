@@ -4,7 +4,6 @@ import redis
 
 # zmq poll timeout
 ZMQ_POLL_TIMEOUT = 10000  # 10s
-SUBSCRIBERS = 1 # amount of writers
 
 # xapian zmq poll timeout
 XAPIAN_ZMQ_POLL_TIMEOUT = 100000 # 100s

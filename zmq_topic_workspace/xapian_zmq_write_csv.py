@@ -42,7 +42,6 @@ if __name__ == '__main__':
     # send sync signal
     syncclient.send("")
     str1 = syncclient.recv()
-    free(str1)
     print 'ready'
 
     # Process messages from receiver and controller
