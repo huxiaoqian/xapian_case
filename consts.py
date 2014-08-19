@@ -42,8 +42,8 @@ CSV_FLOW_PATH = '/home/ubuntu4/ljh/csv/flow/'
 
 # path to write xapian_index
 XAPIAN_DB_PATH = 'master_timeline_weibo_csv'
-XAPIAN_DATA_DIR = '/home/ubuntu3/ljh/csv/data/'
-XAPIAN_STUB_FILE_DIR = '/home/ubuntu3/ljh/csv/stub/'
+XAPIAN_DATA_DIR = '/home/ubuntu4/ljh/csv/data/'
+XAPIAN_STUB_FILE_DIR = '/home/ubuntu4/ljh/csv/stub/'
 
 # redis config
 GLOBAL_CSV_QUEUE_INDEX = 'global_vent_queue:index'

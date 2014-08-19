@@ -94,7 +94,7 @@ if __name__ == '__main__':
                 te = time.time()
                 cost = te - ts
                 ts = te
-                print '[%s] [%s] total csv write: %s items, %s files, %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), csv_name, count, chunks, cost, CHUNK_SIZE)
+                print '[%s] [%s] total csv write: %s items, %s files, %s sec/per %s' % (datetime.now().strftime('%Y-%m-%d %H:%M:%S'), csv_name, count, chunks, cost, FLOW_SIZE)
 
                 csv_no = get_now_csv_no(unit_count)
                 csv_name = '%s.csv' % csv_no
