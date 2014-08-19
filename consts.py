@@ -23,6 +23,7 @@ ZMQ_SYNC_VENT_PORT = 5575 # sync port
 XAPIAN_ZMQ_VENT_HOST = '219.224.135.48' # vent and control host
 XAPIAN_ZMQ_VENT_PORT = 5580 # vent port
 XAPIAN_ZMQ_CTRL_VENT_PORT = 5581 # control port
+XAPIAN_ZMQ_SYNC_VENT_PORT = 5582 # sync port
 
 FROM_CSV = 1 # if read from csv
 if FROM_CSV:
