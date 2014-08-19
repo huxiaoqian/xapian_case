@@ -10,7 +10,7 @@ sys.path.append("..")
 from datetime import datetime
 from argparse import ArgumentParser
 from utils import json2csvrow
-from consts import ZMQ_VENT_HOST, ZMQ_VENT_PORT, ZMQ_CTRL_VENT_PORT, ZMQ_POLL_TIMEOUT, \
+from consts import ZMQ_VENT_HOST, ZMQ_VENT_PORT, ZMQ_CTRL_VENT_PORT, ZMQ_SYNC_VENT_PORT, ZMQ_POLL_TIMEOUT, \
                    GLOBAL_CSV_QUEUE_INDEX, GLOBAL_CSV_QUEUE_SENTIMENT, GLOBAL_CSV_QUEUE_PROFILE, \
                    VENT_REDIS_HOST, VENT_REDIS_PORT, FLOW_SIZE, CSV_FLOW_PATH, GLOBAL_CSV_QUEUE_HBASE
 
@@ -34,6 +34,16 @@ if __name__ == '__main__':
     controller.connect('tcp://%s:%s' % (ZMQ_VENT_HOST, ZMQ_CTRL_VENT_PORT))
     controller.setsockopt(zmq.SUBSCRIBE,"")
     print 'controller connected'
+
+    # Socket for sync
+    syncclient = context.socket(zmq.REQ)
+    syncclient.connect("tcp://%s:%s" % (ZMQ_VENT_HOST, ZMQ_SYNC_VENT_PORT))
+
+    # send sync signal
+    syncclient.send("")
+    str1 = syncclient.recv()
+    free(str1)
+    print 'ready'
 
     # Process messages from receiver and controller
     poller = zmq.Poller()
