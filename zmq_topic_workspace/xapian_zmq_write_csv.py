@@ -62,7 +62,6 @@ if __name__ == '__main__':
             socks = dict(poller.poll(ZMQ_POLL_TIMEOUT))
         else:
             socks = None
-        print 'socks', socks
 
 
         if socks and socks.get(receiver) == zmq.POLLIN:
@@ -107,7 +106,10 @@ if __name__ == '__main__':
                 print 'BEGIN'
                 datestr = '%s_flow/' % signal[:8]
                 if not os.path.exists(CSV_FLOW_PATH + datestr):
-                    os.makedirs(CSV_FLOW_PATH + datestr)
+                    try:
+                        os.makedirs(CSV_FLOW_PATH + datestr)
+                    except:
+                        pass
                 unit_count = 0
 
                 csv_no = get_now_csv_no(unit_count)

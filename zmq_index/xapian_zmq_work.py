@@ -65,8 +65,6 @@ if __name__ == '__main__':
         item['terms'] = cut(s, text, cx=False)
         item['topics'] = list(set(item['terms']))
 
-        print 'item[terms]',item['terms']
-        print 'item[topics]',item['topics']
         return item
     fill_field_funcs.append(cut_text)
 
@@ -78,7 +76,6 @@ if __name__ == '__main__':
             socks = dict(poller.poll(XAPIAN_ZMQ_POLL_TIMEOUT))
         else:
             socks = None
-        print 'socks', socks
 
         if socks and socks.get(receiver) == zmq.POLLIN:
             item = receiver.recv_json()
@@ -103,7 +100,10 @@ if __name__ == '__main__':
                 datestr = '%s_data/' % signal[:8]
 
                 if not os.path.exists(XAPIAN_DATA_DIR + datestr):
-                    os.makedirs(XAPIAN_DATA_DIR + datestr)
+                    try:
+                        os.makedirs(XAPIAN_DATA_DIR + datestr)
+                    except:
+                        pass
 
                 dbpath = datestr + '_' + XAPIAN_DB_PATH
                 xapian_indexer = XapianIndex(dbpath, SCHEMA_VERSION, remote_stub)
