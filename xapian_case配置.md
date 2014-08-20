@@ -123,16 +123,17 @@ xapian_case主要完成48建立索引的功能。
 http://blog.csdn.net/orientsurge163/article/details/9879019
 
 2）测试方法
-
+```
     import numpy
     import scipy
+    
     numpy.test('full')
     scipy.test('full')
-
+```
 3）若服务器上未安装opencc，执行以下命令
-
+```
     sudo apt-get install opencc
-
+```
 
 
 
