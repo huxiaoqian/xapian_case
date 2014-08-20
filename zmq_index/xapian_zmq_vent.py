@@ -81,7 +81,6 @@ if __name__ == '__main__':
     from_csv = FROM_CSV
 
     def csv_input_pre_func(item):
-        print 'item', item
         item = itemLine2Dict(item)
         return item
 
