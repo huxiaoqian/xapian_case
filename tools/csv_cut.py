@@ -134,23 +134,26 @@ def main():
                 for f in source_files:
                     print 'f', f
                     f = open(source_path + f, 'r')
-                    for line in f:
-                        itemdict = itemLine2Dict(line)
-                        if itemdict:
-                            item_timestamp = itemdict['timestamp']
-                            csv_no = get_now_csv_no(item_timestamp)
+                    try:
+                        for line in f:
+                            itemdict = itemLine2Dict(line)
+                            if itemdict:
+                                item_timestamp = itemdict['timestamp']
+                                csv_no = get_now_csv_no(item_timestamp)
 
-                            fw = open(dest_path + str(csv_no) + '.csv', 'a')
-                            fw.write(line + '\n')
-                            fw.close()
+                                fw = open(dest_path + str(csv_no) + '.csv', 'a')
+                                fw.write(line + '\n')
+                                fw.close()
 
-                        if count % 10000 == 0:
-                            te = time.time()
-                            print count, '%s sec' % (te - ts)
-                            ts = te
-                        count += 1
-
+                            if count % 10000 == 0:
+                                te = time.time()
+                                print count, '%s sec' % (te - ts)
+                                ts = te
+                            count += 1
+                    except:
+                        pass
                     f.close()
+
 
 if __name__ == '__main__':
     main()
