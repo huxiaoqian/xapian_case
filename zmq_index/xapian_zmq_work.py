@@ -112,6 +112,7 @@ if __name__ == '__main__':
 
             elif signal == "END":
                 print 'end'
+                break
 
             elif signal == 'KILL':
                 print 'killed'

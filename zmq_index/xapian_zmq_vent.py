@@ -67,15 +67,6 @@ if __name__ == '__main__':
     syncservice = context.socket(zmq.REP)
     syncservice.bind("tcp://*:%s" % XAPIAN_ZMQ_SYNC_VENT_PORT)
 
-    print 'waiting', SUBSCRIBERS
-    subscribers = 0
-    while (subscribers < SUBSCRIBERS):
-        str1 = syncservice.recv()
-        syncservice.send("")
-        subscribers += 1
-        print 'received', subscribers
-    print 'go on'
-
     # init redis
     global_r0 = _default_redis()
     from_csv = FROM_CSV
@@ -103,9 +94,20 @@ if __name__ == '__main__':
                     if csv_name[0] != ' ':
                         controller.send('END')
                         print 'send "END" to workers', csv_name[:8]
-                    time.sleep(5)
+
+                    print 'waiting', SUBSCRIBERS
+                    subscribers = 0
+                    while (subscribers < SUBSCRIBERS):
+                        str1 = syncservice.recv()
+                        syncservice.send("")
+                        subscribers += 1
+                        print 'received', subscribers
+                    print 'go on'
+
                     controller.send('%sBEGIN' % new_csv_name[:8])
                     print 'sent "%sBEGIN" to workers' % new_csv_name[:8]
+
+                    time.sleep(5)
 
                 csv_name = new_csv_name
 
