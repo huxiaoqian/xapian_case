@@ -9,7 +9,7 @@ ZMQ_POLL_TIMEOUT = 10000  # 10s
 XAPIAN_ZMQ_POLL_TIMEOUT = 100000 # 100s
 XAPIAN_REMOTE_OPEN_TIMEOUT = 300000  # 300s
 
-FLOW_SIZE = 5000000 # flow file size
+FLOW_SIZE = 1000000 # flow file size
 CHUNK_SIZE = 10000 # file chunk size
 XAPIAN_FLUSH_DB_SIZE = 10000 # xapian flush db size
 
