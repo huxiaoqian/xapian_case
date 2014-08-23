@@ -1,7 +1,7 @@
 #!/bin/bash
 
-
-for k in $(seq 1 6)
+let i=1
+while ((i == 1))
 do
     python xapian_zmq_work.py
 done

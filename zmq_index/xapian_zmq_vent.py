@@ -85,40 +85,37 @@ if __name__ == '__main__':
             tb = time.time()
             ts = tb
 
-            csv_name = '          '
             new_csv_name = global_r0.lpop(GLOBAL_CSV_FILES)
 
             while new_csv_name:
 
-                if new_csv_name[:8] != csv_name[:8]:
-                    if csv_name[0] != ' ':
-                        controller.send('END')
-                        print 'send "END" to workers', csv_name[:8]
 
-                    print 'waiting', SUBSCRIBERS
-                    subscribers = 0
-                    while (subscribers < SUBSCRIBERS):
-                        str1 = syncservice.recv()
-                        syncservice.send("")
-                        subscribers += 1
-                        print 'received', subscribers
-                    print 'go on'
+                print 'waiting', SUBSCRIBERS
+                subscribers = 0
+                while (subscribers < SUBSCRIBERS):
+                    str1 = syncservice.recv()
+                    syncservice.send("")
+                    subscribers += 1
+                    print 'received', subscribers
+                print 'go on'
 
-                    controller.send('%sBEGIN' % new_csv_name[:8])
-                    print 'sent "%sBEGIN" to workers' % new_csv_name[:8]
+                controller.send('%sBEGIN' % new_csv_name[:8])
+                print 'sent "%sBEGIN" to workers' % new_csv_name[:8]
 
-                    time.sleep(5)
+                time.sleep(5)
 
-                csv_name = new_csv_name
 
-                csv_input = load_items_from_csv(os.path.join(CSV_FILEPATH, csv_name))
-                print 'loaded', csv_name
+                csv_input = load_items_from_csv(os.path.join(CSV_FILEPATH, new_csv_name))
+                print 'loaded', new_csv_name
                 load_origin_data_func = csv_input.__iter__
                 tmp_count, tmp_cost = send_all(load_origin_data_func, sender, pre_funcs=pre_funcs)
                 print 'all sended'
                 total_cost += tmp_cost
                 count += tmp_count
                 csv_input.close()
+
+                controller.send('END')
+                print 'send "END" to workers', new_csv_name
 
                 if count % (XAPIAN_FLUSH_DB_SIZE * 10) == 0:
                     te = time.time()
