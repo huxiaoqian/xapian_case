@@ -116,6 +116,56 @@ xapian_case主要完成48建立索引的功能。
     src/redis_cli                                 
     lpush 'global_vent_queue:index' csv文件名 #推送redis中某个csv文件
 ```
+3.2 安装python基本工具
+```
+sudo apt-get install python-pip python-dev build-essential python-setuptools
+```
+3.3 安装scws分词工具
+
+参考http://www.ftphp.com/scws/docs.php#instscws，以 Linux(FreeBSD) 操作系统为例
+
+1）取得 scws-1.2.2 的代码
+wget http://www.xunsearch.com/scws/down/scws-1.2.2.tar.bz2
+
+2）解开压缩包
+[hightman@d1 ~]$ tar xvjf scws-1.2.2.tar.bz2
+
+3）进入目录执行配置脚本和编译
+[hightman@d1 ~]$ cd scws-1.2.2[hightman@d1 ~/scws-1.2.2]$ ./configure --prefix=/usr/local/scws ; make ; make install
+
+注：这里和通用的 GNU 软件安装方式一样，具体选项参数执行 ./configure --help 查看。
+常用选项为：--prefix=<scws的安装目录>
+
+4）顺利的话已经编译并安装成功到 /usr/local/scws 中了，执行下面命令看看文件是否存在
+[hightman@d1 ~/scws-1.2.2]$ ls -al /usr/local/scws/lib/libscws.la
+
+5）试试执行 scws-cli 文件
+[hightman@d1 ~/scws-1.2.2]$ /usr/local/scws/bin/scws -h
+scws (scws-cli/1.2.2)
+Simple Chinese Word Segmentation - Command line usage.
+Copyright (C)2007 by hightman.
+...
+
+6）cd /usr/local/scws/etc
+
+7）wget http://www.xunsearch.com/scws/down/scws-dict-chs-utf8.tar.bz2
+
+8）wget http://www.xunsearch.com/scws/down/scws-dict-cht-utf8.tar.bz2
+
+9）sudo tar xvjf scws-dict-chs-utf8.tar.bz2	
+
+10）sudo tar xvjf scws-dict-cht-utf8.tar.bz2
+
+11）sudo chmod 664 dict_cht.utf8.xdb
+
+12）sudo chmod 664 dict.utf8.xdb
+
+13）安装pyscws：git clone https://github.com/MOON-CLJ/pyscws.git; cd pyscws; python setup.py install
+
+14）路径设置（保证import scws不报错）：
+
+在/etc/ld.so.conf中添加一行/usr/local/scws/lib/，然后sudo ldconfig
+
 3.2 scipy、numpy安装
 
 1）参考教程
