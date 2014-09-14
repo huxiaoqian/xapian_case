@@ -15,8 +15,8 @@ SCHEMA_VERSION = XAPIAN_SEARCH_DEFAULT_SCHEMA_VERSION
 DOCUMENT_ID_TERM_PREFIX = 'M'
 DOCUMENT_CUSTOM_TERM_PREFIX = 'X'
 
-
 class Schema:
+    # weibo schema
     v5 = {
         'origin_data_iter_keys': ['_id', 'user', 'retweeted_uid', 'retweeted_mid', 'text', 'timestamp', 'reposts_count', 'source', 'bmiddle_pic', 'geo', 'attitudes_count', 'comments_count', 'sentiment', 'topics', 'message_type'],
         'index_item_iter_keys': ['retweeted_mid', 'user', 'sentiment', 'message_type'],
@@ -41,6 +41,36 @@ class Schema:
         ],
     }
 
+    # user schema
+    v1 = {
+        'db': 'master_timeline',
+        'collection': 'master_timeline_user',
+        'origin_data_iter_keys': ['_id', 'province', 'city', 'verified', 'name', 'friends_count',
+                                  'gender', 'profile_image_url', 'verified_type',
+                                  'followers_count', 'followers', 'location', 'statuses_count', 'friends', 'description', 'created_at'],
+        'index_item_iter_keys': ['name', 'location', 'province'],
+        'index_value_iter_keys': ['_id', 'created_at', 'followers_count', 'statuses_count', 'friends_count'],
+        'pre_func': {
+            'created_at': lambda x: local2unix(x) if x else 0,
+        },
+        'obj_id': '_id',
+        # 用于去重的value no(column)
+        'collapse_valueno': 3,
+        'idx_fields': [
+            # term
+            {'field_name': 'name', 'column': 0, 'type': 'term'},
+            {'field_name': 'location', 'column': 1, 'type': 'term'},
+            {'field_name': 'province', 'column': 2, 'type': 'term'},
+            {'field_name': 'gender', 'column': 9, 'type': 'term'},
+            {'field_name': 'verified_type', 'column': 10, 'type': 'term'},
+            # value
+            {'field_name': '_id', 'column': 3, 'type': 'long'},
+            {'field_name': 'followers_count', 'column': 4, 'type': 'long'},
+            {'field_name': 'statuses_count', 'column': 5, 'type': 'long'},
+            {'field_name': 'friends_count', 'column': 6, 'type': 'long'},
+            {'field_name': 'created_at', 'column': 7, 'type': 'long'},
+        ],
+    }
 
 def fields_not_empty(func):
     def _(*args, **kwargs):
